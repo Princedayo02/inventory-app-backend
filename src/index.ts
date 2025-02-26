@@ -6,7 +6,7 @@ import router from "./routes";
 
 dotenv.config();
 sequelize
-	.sync({ force: true })
+	.sync({ force: false })
 	.then(() => console.log("db connected successfully"))
 	.catch((error) => console.log("error connecting database", error));
 

@@ -30,7 +30,7 @@ class Products extends Model {
 	@Column({ type: DataType.STRING })
 	declare reorder_level: string;
 
-	@HasMany(() => Users, "user_id")
+	@BelongsTo(() => Users, "user_id")
 	declare created_by: Users[];
 }
 

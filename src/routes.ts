@@ -1,7 +1,7 @@
 import express from "express";
 import { getUsers, addUser, deleteUser, getUserbyId } from "./controllers/usersController";
 import { getInventory, addInvetory, getInventories, editInventory, putInventory, deleteInventory } from "./controllers/inventoryController";
-import { registerUser } from "./controllers/authController";
+import { loginUser, registerUser } from "./controllers/authController";
 
 const router = express.Router();
 
@@ -17,6 +17,7 @@ router.put("/inventory", putInventory);
 router.put("/inventory/:id", editInventory);
 router.delete("/inventory", deleteInventory);
 
-router.post("/auth", registerUser);
+router.post("/auth/register", registerUser);
+router.post("/auth/login", loginUser)
 
 export default router;

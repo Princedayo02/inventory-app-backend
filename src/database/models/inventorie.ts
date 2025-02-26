@@ -21,7 +21,7 @@ class Inventories extends Model {
 	@Column({ type: DataType.STRING })
 	declare reference_number: string;
 
-	@BelongsTo(() => Users, "performed_by")
+	@BelongsTo(() => Users, "user_id")
 	declare perfomed_by: Users;
 }
 export default Inventories;
