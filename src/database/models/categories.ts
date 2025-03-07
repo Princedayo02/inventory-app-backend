@@ -1,5 +1,6 @@
 import { Model, Table, Column, DataType, PrimaryKey, BelongsTo, HasMany } from "sequelize-typescript";
 import { toDefaultValue } from "sequelize/types/utils";
+import Products from "./products";
 
 @Table({ timestamps: true })
 class Categories extends Model {
@@ -12,5 +13,8 @@ class Categories extends Model {
 
 	@Column({ type: DataType.STRING })
 	declare description: string;
+
+	// @HasMany(() => Products, "product_id")
+	// declare products: Products[];
 }
 export default Categories;

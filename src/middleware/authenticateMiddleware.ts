@@ -15,7 +15,7 @@ export const authToken = async (req: Request, res: Response, next: NextFunction)
 			res.status(401).json({ message: "access token not provided" });
 		} else {
 			const decoded = jwt.verify(token, secret);
-			console.log(decoded, "decoded token from authMiddleware");
+			// console.log(decoded, "decoded token from authMiddleware");
 			res.locals.user = decoded;
 			next();
 		}

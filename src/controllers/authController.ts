@@ -28,7 +28,7 @@ export const loginUser = async (req: Request, res: Response) => {
 			console.log(isValid);
 			if (isValid) {
 				const accessToken = jwt.sign(
-					{ id: searchUser.id, email: searchUser.email, role: searchUser.role },
+					{ id: searchUser.user_id, email: searchUser.email, role: searchUser.role },
 					`${process.env.SECRET}`,
 					{
 						expiresIn: "1h",

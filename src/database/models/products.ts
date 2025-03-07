@@ -1,4 +1,4 @@
-import { Model, Column, Table, DataType, PrimaryKey, HasMany, BelongsTo } from "sequelize-typescript";
+import { Model, Column, Table, DataType, PrimaryKey, HasMany, BelongsTo, ForeignKey } from "sequelize-typescript";
 import { toDefaultValue } from "sequelize/types/utils";
 import Categories from "./categories";
 import Users from "./users";
@@ -18,8 +18,12 @@ class Products extends Model {
 	@Column({ type: DataType.STRING })
 	declare sku: string;
 
-	@HasMany(() => Categories, "category_id")
-	declare category_id: Categories[];
+	@BelongsTo(() => Categories)
+	declare category: Categories;
+
+	@ForeignKey(() => Categories)
+	@Column({ type: DataType.UUID, field: "category_id", allowNull: true })
+	declare category_id: string;
 
 	@Column({ type: DataType.INTEGER })
 	declare unit_price: number;
@@ -30,8 +34,12 @@ class Products extends Model {
 	@Column({ type: DataType.STRING })
 	declare reorder_level: string;
 
-	@BelongsTo(() => Users, "user_id")
-	declare created_by: Users[];
+	@ForeignKey(() => Users)
+	@Column({ type: DataType.UUID, field: "created_by" })
+	declare user_id: string;
+
+	@BelongsTo(() => Users)
+	declare created_by: Users;
 }
 
 export default Products;
