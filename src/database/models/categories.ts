@@ -14,7 +14,7 @@ class Categories extends Model {
 	@Column({ type: DataType.STRING })
 	declare description: string;
 
-	// @HasMany(() => Products, "product_id")
-	// declare products: Products[];
+	@HasMany(() => Products)
+	declare products: Products[];
 }
 export default Categories;

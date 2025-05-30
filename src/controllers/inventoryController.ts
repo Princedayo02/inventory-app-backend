@@ -3,6 +3,7 @@ import Categories from "../database/models/categories";
 import Inventories from "../database/models/inventorie";
 import Products from "../database/models/products";
 import Users from "../database/models/users";
+import { where } from "sequelize";
 
 export const getInventories = async (req: Request, res: Response) => {
 	try {
@@ -16,20 +17,52 @@ export const getInventories = async (req: Request, res: Response) => {
 	}
 };
 
-export const addInvetory = async (req: Request, res: Response) => {
+export const performInvetory = async (req: Request, res: Response) => {
 	try {
-		const { inventory_id, product_id, transaction_type, quantity, reference_number, performed_by } = req.body;
-		const newInventory = await Inventories.create({
-			inventory_id,
-			product_id,
-			transaction_type,
-			quantity,
-			reference_number,
-			performed_by,
-		});
-		await newInventory.save();
-		res.status(201).json({ message: "Inventory created", newInventory });
+		const { inventory_id, transaction_type, quantity, product_id, reference_number, performed_by } = req.body;
+		if (transaction_type === "in") {
+			const products = await Products.findOne({ where: { product_id } });
+			if (products) {
+				const quantityToNumber = parseInt(quantity);
+				products.quantity_in_stock = products.quantity_in_stock + quantityToNumber;
+				await products.save();
+				const addInventory = await Inventories.create({
+					inventory_id,
+					product_id,
+					transaction_type,
+					quantity,
+					reference_number,
+					user_id: performed_by,
+				});
+				await addInventory.save();
+				res.status(201).json({ message: "Inventory created", addInventory });
+			}
+		} else if (transaction_type === "out") {
+			console.log(product_id);
+			const product = await Products.findOne({ where: { product_id } });
+			if (product) {
+				const quantityToNuber = parseInt(quantity);
+				console.log(quantityToNuber, product.quantity_in_stock);
+				if (product.quantity_in_stock >= quantityToNuber) {
+					product.quantity_in_stock = product.quantity_in_stock - quantityToNuber;
+					await product.save();
+					const newInventory = await Inventories.create({
+						inventory_id,
+						product_id,
+						transaction_type,
+						quantity,
+						reference_number,
+						user_id: performed_by,
+					});
+					await newInventory.save();
+					res.status(201).json({ message: "Inventory created", newInventory });
+				} else {
+					res.status(400).json({ message: "Insufficient quantity" });
+				}
+			}
+		}
 	} catch (error) {
+		console.log(error);
 		res.status(500).json({ message: "error creating inventory", error });
 	}
 };

@@ -18,13 +18,6 @@ class Products extends Model {
 	@Column({ type: DataType.STRING })
 	declare sku: string;
 
-	@BelongsTo(() => Categories)
-	declare category: Categories;
-
-	@ForeignKey(() => Categories)
-	@Column({ type: DataType.UUID, field: "category_id", allowNull: true })
-	declare category_id: string;
-
 	@Column({ type: DataType.INTEGER })
 	declare unit_price: number;
 
@@ -38,8 +31,15 @@ class Products extends Model {
 	@Column({ type: DataType.UUID, field: "created_by" })
 	declare user_id: string;
 
+	@BelongsTo(() => Categories)
+	declare category: Categories;
+
 	@BelongsTo(() => Users)
 	declare created_by: Users;
+
+	@ForeignKey(() => Categories)
+	@Column({ type: DataType.UUID, field: "category_id", allowNull: true })
+	declare category_id: string;
 }
 
 export default Products;
