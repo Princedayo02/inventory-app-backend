@@ -3,16 +3,19 @@ import Users from "../database/models/users";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { sendWelcomeMail } from "../utilities";
 
 dotenv.config();
 
 export const registerUser = async (req: Request, res: Response) => {
 	try {
 		console.log(req.body);
-		const { email, password, status, role } = req.body;
+		const { email, password, gender, fullName, status, role } = req.body;
 		const hashedPassword = await bcrypt.hash(password, 10);
-		const user = await Users.create({ email, password: hashedPassword, status, role: role.trim().toLowerCase() });
-		res.status(201).json({ message: "User created", data: user });
+		const user = await Users.create({ email, gender, fullName, password: hashedPassword, status, role: role.trim().toLowerCase() });
+		const returnedUser = { email: user.email, status: user.status };
+		sendWelcomeMail(email, fullName);
+		res.status(201).json({ message: "User created", data: returnedUser });
 	} catch (err) {
 		console.log(err, "Error creating user");
 		res.status(500).json({ message: "Server error", err });

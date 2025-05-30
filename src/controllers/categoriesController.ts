@@ -4,9 +4,7 @@ import Users from "../database/models/users";
 
 export const getCategories = async (req: Request, res: Response) => {
 	try {
-		const allCategories = await Categories.findAll({
-			attributes: ["name", "description"],
-		});
+		const allCategories = await Categories.findAll({ attributes: ["name", "description", "category_id"] });
 		res.status(200).json(allCategories);
 	} catch (err) {
 		console.log(err);
@@ -30,9 +28,9 @@ export const addCategory = async (req: Request, res: Response) => {
 };
 
 export const getCategory = async (req: Request, res: Response) => {
-	const id = req.params.inventory_id;
-	const category = await Categories.findOne({ where: { inventory_id: id } });
+	const id = req.params.category_id;
 	try {
+		const category = await Categories.findOne({ where: { category_id: id } });
 		if (!category) {
 			res.status(404).json({ message: "Category not found" });
 		} else {

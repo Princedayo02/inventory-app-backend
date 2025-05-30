@@ -18,22 +18,29 @@ export const getUsers = async (req: Request, res: Response) => {
 	}
 };
 
-export const addUser = async (req: Request, res: Response) => {
-	const { user_id, role, password, status, email } = req.body;
-	const createdUser = await Users.create({ user_id, role, password, status, email });
-	res.status(200).json({ users: createdUser });
-};
+// export const addUser = async (req: Request, res: Response) => {
+// 	const { user_id, role, password, status, email } = req.body;
+// 	const createdUser = await Users.create({ user_id, role, password, status, email });
+// 	res.status(200).json({ users: createdUser });
+// };
 
-export const deleteUser = (req: Request, res: Response) => {
-	// const newUser = Users.filter((user) => {
-	// 	return user.user_id !== req.body.id;
-	// });
-	// res.status(200).json(newUser);
+export const deleteUser = async (req: Request, res: Response) => {
+	try {
+		const id = req.body.user_id;
+		const deletedUser = await Users.destroy({ where: { user_id: id } });
+		res.status(200).json({ deletedUser, message: "User successfully deleted." });
+	} catch (error) {
+		res.status(500).json({ message: "Error deleting User", error });
+	}
 };
 
 export const getUserbyId = async (req: Request, res: Response) => {
 	const id = req.params.id;
-	const mainUser = await Users.findOne({ where: { user_id: id } });
-	console.log(res.locals.user, "user logged in");
-	res.status(200).json(mainUser);
+	try {
+		const mainUser = await Users.findOne({ where: { user_id: id }, attributes: ["email", "status", "fullName", "role", "gender"] });
+		console.log(res.locals.user, "user logged in");
+		res.status(200).json(mainUser);
+	} catch (err) {
+		res.status(500).json({ message: "error getting user by id", err });
+	}
 };

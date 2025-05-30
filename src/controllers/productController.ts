@@ -32,3 +32,24 @@ export const addProducts = async (req: Request, res: Response) => {
 		res.status(501).json({ message: "Error creating product", error });
 	}
 };
+export const getProducts = async (req: Request, res: Response) => {
+	try {
+		const newProducts = await Products.findAll({
+			attributes: ["name", "description", "category_id", "unit_price", "sku", "quantity_in_stock", "reorder_level", "user_id"],
+		});
+		res.status(200).json({ message: "Products", newProducts });
+	} catch (error) {
+		res.status(500).json({ message: "error finding products", error });
+	}
+};
+
+export const getProductsById = async (req: Request, res: Response) => {
+	try {
+		const product_id = req.params.product_id;
+		console.log(product_id);
+		const product = await Products.findAll({ where: { product_id } });
+		res.status(200).json({ message: "Products by category", product });
+	} catch (err) {
+		res.status(500).json({ message: "Error geting products by category", err });
+	}
+};

@@ -12,7 +12,7 @@ class Inventories extends Model {
 	@BelongsTo(() => Products, "product_id")
 	declare product: string;
 
-	@Column({ type: DataType.STRING, allowNull: false })
+	@Column({ type: DataType.ENUM("in", "out", "adjustment"), allowNull: false })
 	declare transaction_type: string;
 
 	@Column({ type: DataType.STRING })
