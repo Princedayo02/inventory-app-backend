@@ -1,5 +1,9 @@
 import express, { Express, Request, Response } from "express";
 import Users from "../database/models/users";
+import { sendWelcomeMail } from "../utilities";
+import bcrypt from "bcrypt";
+import "dotenv/config";
+import { clerkClient, requireAuth, getAuth } from "@clerk/express";
 
 interface IUsers {
 	user_id: number;
@@ -34,6 +38,19 @@ export const deleteUser = async (req: Request, res: Response) => {
 	}
 };
 
+export const getProfile = async (req: Request, res: Response) => {
+	try {
+		console.log(req.auth);
+		const { userId } = getAuth(req);
+		console.log(userId, "user id from Clerk");
+		const getUserProfile = await Users.findOne({ where: { clerkId: userId } });
+		res.status(200).json({ getUserProfile, message: "user profile displayed" });
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ message: "error getting uder's profile", err });
+	}
+};
+
 export const getUserbyId = async (req: Request, res: Response) => {
 	const id = req.params.id;
 	try {
@@ -42,5 +59,30 @@ export const getUserbyId = async (req: Request, res: Response) => {
 		res.status(200).json(mainUser);
 	} catch (err) {
 		res.status(500).json({ message: "error getting user by id", err });
+	}
+};
+
+export const registerClerkUser = async (req: Request, res: Response) => {
+	console.log(req.body.data, "request from clerk webhook");
+	try {
+		const data = req.body.data;
+		const email = data.email_addresses && data.email_addresses.length > 0 ? data.email_addresses[0].email_address ?? "" : "";
+		const firstName = data.first_name;
+		const clerkId = data.id;
+		const lastName = data.last_name;
+		const gender = data.gender;
+		const role = "user";
+		const status = "active";
+		const password = await bcrypt.hash("12345srrdfdfttfy6_#", 10);
+		console.log(req.body);
+		const fullName = firstName + " " + lastName;
+		// const hashedPassword = await bcrypt.hash(password, 10);
+		const user = await Users.create({ email, password: password, clerkId, gender, fullName, status, role: role.trim().toLowerCase() });
+		const returnedUser = { email: user.email, status: user.status };
+		// sendWelcomeMail(email, fullName);
+		res.status(200).json({ message: "yaay" });
+	} catch (err) {
+		console.log(err, "Error creating user");
+		res.status(500).json({ message: "Server error", err });
 	}
 };

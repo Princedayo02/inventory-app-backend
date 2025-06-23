@@ -7,6 +7,9 @@ class Users extends Model {
 	@Column({ type: DataType.UUID, allowNull: false, defaultValue: DataType.UUIDV4 })
 	declare user_id: string;
 
+	@Column({ type: DataType.STRING, allowNull: true })
+	declare clerkId: string;
+
 	@Column({ type: DataType.STRING, allowNull: false, unique: true })
 	declare email: string;
 

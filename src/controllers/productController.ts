@@ -3,9 +3,9 @@ import { generateSKU } from "../utilities";
 import Products from "../database/models/products";
 
 export const addProducts = async (req: Request, res: Response) => {
-	const { name, description, category_id, unit_price, quantity_in_stock, reorder_level } = req.body;
+	const { name, user_id, description, category_id, unit_price, quantity_in_stock, reorder_level } = req.body;
 	const sku = generateSKU(name);
-	const userId = res.locals.user.id;
+	// const userId = res.locals.user.id;
 	try {
 		console.log(name, "product name");
 		console.log(description, "product description");
@@ -14,7 +14,7 @@ export const addProducts = async (req: Request, res: Response) => {
 		console.log(sku, "product sku");
 		console.log(quantity_in_stock, "product quantity");
 		console.log(reorder_level, "product reorder level");
-		console.log(userId, "user id");
+		// console.log(userId, "user id");
 		const createdProduct = await Products.create({
 			name,
 			description,
@@ -23,7 +23,7 @@ export const addProducts = async (req: Request, res: Response) => {
 			sku,
 			quantity_in_stock,
 			reorder_level,
-			user_id: userId,
+			user_id,
 		});
 		// Products.find({where:{}})
 

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import CORS from "cors";
 import sequelize from "./database/connection";
 import router from "./routes";
+import { clerkMiddleware } from "@clerk/express";
 
 dotenv.config();
 sequelize
@@ -11,6 +12,7 @@ sequelize
 	.catch((error) => console.log("error connecting database", error));
 
 const app = express();
+app.use(clerkMiddleware());
 const port = process.env.PORT || 4000;
 
 app.use(CORS());
